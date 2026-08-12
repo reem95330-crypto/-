@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مِرْبَاع — ادخل الحكاية، واكتشف تراثنا</title>
+  <meta name="description" content="تطبيق ويب تفاعلي للألعاب التراثية السعودية - استكشف تراث المملكة العربية السعودية عبر ألعاب قصيرة وألغاز شيقة بأسلوب بصري عصري.">
+  
+  <!-- الخطوط من Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  
+  <!-- ملف الأنماط والتنسيق -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <!-- تأثير غبار الذهب/الرماد في الخلفية التفاعلية -->
+  <div id="ambient-particles" class="particles"></div>
+
+  <div id="app-container">
+    
+    <!-- ============================================ -->
+    <!-- 1. الصفحة الرئيسية (Home Screen) -->
+    <!-- ============================================ -->
+    <section id="splash-screen" class="active">
+      
+      <!-- اللوقو الرسمي المدمج بالمشهد المرفق من المستخدم -->
+      <div class="hero-logo-wrapper">
+        <img src="logo.png" alt="مِرْبَاع — الهوية الرسمية" class="hero-logo-image">
+      </div>
+
+      <!-- النصوص الترحيبية التابعة للهوية والـ Tagline -->
+      <div class="hero-brand-container">
+        <!-- العنوان والشعار -->
+        <h1 class="brand-title">مِرْبَاع</h1>
+        <p class="brand-tagline">ادخل الحكاية، واكتشف تراثنا</p>
+        <p class="brand-description">رحلة تفاعلية بين ألعاب وألغاز مستوحاة من تراثنا السعودي.</p>
+        
+        <!-- زر التفاعل المطور بالنص المطلوب: ابدأ الرحلة -->
+        <button id="enter-btn" class="btn primary-btn pulse-glow">ابدأ الرحلة</button>
+      </div>
+
+      <!-- حقوق التطبيق -->
+      <footer class="splash-footer">
+        <p>© ٢٠٢٦ مِرْبَاع. تجربة ألعاب تراثية سعودية تفاعلية</p>
+      </footer>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- 2. صفحة «رحلة مِرْبَاع» لاختيار الألعاب (Game Selection - Lobby) -->
+    <!-- ============================================ -->
+    <section id="main-lobby" class="inactive">
+      <header class="lobby-header">
+        
+        <!-- زر العودة للرئيسية وشعار الهوية المصغر -->
+        <div class="logo-compact-back">
+          <button id="lobby-back-btn" class="btn secondary-btn back-btn">العودة →</button>
+          <div class="logo-divider"></div>
+          <div class="compact-logo-mark">
+            <img src="logo.png" alt="شعار مِرْبَاع مصغر" class="compact-logo-image">
+          </div>
+          <span class="logo-text">مِرْبَاع</span>
+        </div>
+
+        <div class="lobby-stats">
+          <span class="stat-badge">
+            <span class="stat-icon">⭐</span>
+            <span id="score-counter">النقاط: ٠</span>
+          </span>
+          <button id="lobby-sound-toggle" class="btn sound-btn" aria-label="كتم الأصوات">
+            <span class="sound-icon">🔊</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="lobby-content">
+        <!-- الترويسة التوجيهية للرحلة -->
+        <div class="lobby-welcome">
+          <h2>اختر حكايتك</h2>
+          <p>كل لعبة تفتح لك بابًا جديدًا من تراثنا.</p>
+        </div>
+
+        <!-- مؤشر وتتبع تقدم الرحلة للمستخدم -->
+        <div class="lobby-progress-container">
+          <div class="progress-info">
+            <span class="progress-title">رحلتك في مِرْبَاع</span>
+            <span id="lobby-progress-text" class="progress-count">اكتشفت ٠ من ٥ حكايات</span>
+          </div>
+          <div class="lobby-progress-bar">
+            <div id="lobby-progress-fill" class="lobby-progress-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- شبكة بطاقات الألعاب الخمسة الفعالة -->
+        <div class="games-grid">
+          
+          <!-- ١. سر القهوة السعودية -->
+          <div class="game-card" data-game="coffee-puzzle" id="card-game-coffee" tabindex="0" role="button">
+            <div class="card-pattern-overlay"></div>
+            <div class="card-icon">
+              <svg viewBox="0 0 100 100" class="heritage-svg-icon" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="finjalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#C9A15A" />
+                    <stop offset="100%" stop-color="#B88A45" />
+                  </linearGradient>
+                </defs>
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#CDBB9A" stroke-width="2" stroke-dasharray="4,4"/>
+                <path d="M25,35 L75,35 L68,75 C67,82 58,85 50,85 C42,85 33,82 32,75 Z" fill="#F3E8D2" stroke="#3A241A" stroke-width="4"/>
+                <path d="M28,45 Q50,48 72,45 L69,60 C68,66 58,68 50,68 C42,68 32,66 31,60 Z" fill="url(#finjalGrad)" stroke="#3A241A" stroke-width="2"/>
+                <polygon points="50,52 45,62 55,62" fill="#B88A45"/>
+                <polygon points="38,50 35,58 42,58" fill="#B88A45"/>
+                <polygon points="62,50 58,58 65,58" fill="#B88A45"/>
+                <line x1="25" y1="35" x2="75" y2="35" stroke="#3A241A" stroke-width="3"/>
+              </svg>
+            </div>
+            <div class="card-body-content">
+              <h3>سر القهوة السعودية</h3>
+              <p>هل تستطيع إعداد القهوة السعودية بالترتيب الصحيح؟</p>
+            </div>
+            <div class="card-footer-info">
+              <span class="card-game-type">ترتيب / تفاعل</span>
+              <div class="card-status">
+                <span class="status-indicator ready" id="status-coffee">متاحة</span>
+                <span class="card-action-text">العب الآن ←</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ٢. لغز الباب النجدي -->
+          <div class="game-card" data-game="door-puzzle" id="card-game-door" tabindex="0" role="button">
+            <div class="card-pattern-overlay"></div>
+            <div class="card-icon">
+              <svg viewBox="0 0 100 100" class="heritage-svg-icon" xmlns="http://www.w3.org/2000/svg">
+                <rect x="20" y="10" width="60" height="80" rx="4" fill="#3A241A" stroke="#B88A45" stroke-width="4" />
+                <line x1="50" y1="10" x2="50" y2="90" stroke="#B88A45" stroke-width="3" />
+                <polygon points="35,25 28,35 42,35" fill="#C9A15A" />
+                <polygon points="35,45 28,55 42,55" fill="#C9A15A" />
+                <polygon points="35,65 28,75 42,75" fill="#C9A15A" />
+                <polygon points="65,25 58,35 72,35" fill="#C9A15A" />
+                <polygon points="65,45 58,55 72,55" fill="#C9A15A" />
+                <polygon points="65,65 58,75 72,75" fill="#C9A15A" />
+                <circle cx="25" cy="20" r="2" fill="#111" />
+                <circle cx="25" cy="50" r="2" fill="#111" />
+                <circle cx="25" cy="80" r="2" fill="#111" />
+                <circle cx="75" cy="20" r="2" fill="#111" />
+                <circle cx="75" cy="50" r="2" fill="#111" />
+                <circle cx="75" cy="80" r="2" fill="#111" />
+              </svg>
+            </div>
+            <div class="card-body-content">
+              <h3>لغز الباب النجدي</h3>
+              <p>تأمل تفاصيل الباب النجدي، واكتشف النمط الصحيح لفتح باب الحكاية.</p>
+            </div>
+            <div class="card-footer-info">
+              <span class="card-game-type">لغز / أنماط</span>
+              <div class="card-status">
+                <span class="status-indicator ready" id="status-door">متاحة</span>
+                <span class="card-action-text">العب الآن ←</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ٣. رموزنا التراثية -->
+          <div class="game-card" data-game="heritage-symbols" id="card-game-symbols" tabindex="0" role="button">
+            <div class="card-pattern-overlay"></div>
+            <div class="card-icon">
+              <svg viewBox="0 0 100 100" class="heritage-svg-icon" xmlns="http://www.w3.org/2000/svg">
+                <path d="M45,40 L55,40 L57,65 L43,65 Z" fill="#C9A15A" stroke="#3A241A" stroke-width="3" />
+                <path d="M40,65 L60,65 L63,78 L37,78 Z" fill="#B88A45" stroke="#3A241A" stroke-width="3" />
+                <path d="M47,40 Q50,28 47,20 L53,20 Q50,28 53,40 Z" fill="#C9A15A" stroke="#3A241A" stroke-width="3" />
+                <path d="M45,20 L55,20 L50,8 Z" fill="#B88A45" stroke="#3A241A" stroke-width="2"/>
+                <path d="M38,25 Q25,35 38,62" fill="none" stroke="#3A241A" stroke-width="4" stroke-linecap="round"/>
+                <path d="M53,28 Q72,25 65,48 Q55,48 53,40" fill="#C9A15A" stroke="#3A241A" stroke-width="3" />
+              </svg>
+            </div>
+            <div class="card-body-content">
+              <h3>رموزنا التراثية</h3>
+              <p>هل تستطيع التعرف على رموز من تراثنا السعودي؟</p>
+            </div>
+            <div class="card-footer-info">
+              <span class="card-game-type">ألغاز فرعية</span>
+              <div class="card-status">
+                <span class="status-indicator ready" id="status-symbols">متاحة</span>
+                <span class="card-action-text">العب الآن ←</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ٤. رحلة السدو -->
+          <div class="game-card" data-game="sadu-journey" id="card-game-sadu" tabindex="0" role="button">
+            <div class="card-pattern-overlay"></div>
+            <div class="card-icon">
+              <svg viewBox="0 0 100 100" class="heritage-svg-icon" xmlns="http://www.w3.org/2000/svg">
+                <rect x="15" y="10" width="70" height="80" fill="#3A241A" rx="4" stroke="#CDBB9A" stroke-width="2"/>
+                <rect x="25" y="10" width="12" height="80" fill="#B85A5A" />
+                <rect x="63" y="10" width="12" height="80" fill="#C9A15A" />
+                <path d="M42,20 L50,28 L58,20 M42,35 L50,43 L58,35 M42,50 L50,58 L58,50 M42,65 L50,73 L58,65" fill="none" stroke="#F3E8D2" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="card-body-content">
+              <h3>رحلة السدو</h3>
+              <p>اكتشف أنماط السدو وتعرّف على جمال هذا الفن التراثي السعودي.</p>
+            </div>
+            <div class="card-footer-info">
+              <span class="card-game-type">تصنيف / أنماط</span>
+              <div class="card-status">
+                <span class="status-indicator ready" id="status-sadu">متاحة</span>
+                <span class="card-action-text">العب الآن ←</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ٥. حكايات المجلس -->
+          <div class="game-card" data-game="council-stories" id="card-game-council" tabindex="0" role="button">
+            <div class="card-pattern-overlay"></div>
+            <div class="card-icon">
+              <svg viewBox="0 0 100 100" class="heritage-svg-icon" xmlns="http://www.w3.org/2000/svg">
+                <rect x="15" y="25" width="70" height="35" rx="6" fill="#B85A5A" stroke="#3A241A" stroke-width="3"/>
+                <rect x="25" y="32" width="50" height="20" fill="none" stroke="#C9A15A" stroke-width="2" stroke-dasharray="5,3"/>
+                <line x1="15" y1="42" x2="85" y2="42" stroke="#3A241A" stroke-width="2" />
+                <path d="M10,60 L90,60 L85,82 L15,82 Z" fill="#3A241A" stroke="#B88A45" stroke-width="3"/>
+                <rect x="35" y="48" width="30" height="22" rx="4" fill="#C9A15A" stroke="#3A241A" stroke-width="2"/>
+                <line x1="45" y1="48" x2="45" y2="70" stroke="#3A241A" stroke-width="2"/>
+                <line x1="55" y1="48" x2="55" y2="70" stroke="#3A241A" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="card-body-content">
+              <h3>حكايات المجلس</h3>
+              <p>اكتشف أجواء المجلس السعودي وعادات الضيافة التي توارثناها.</p>
+            </div>
+            <div class="card-footer-info">
+              <span class="card-game-type">محاكاة / عادات</span>
+              <div class="card-status">
+                <span class="status-indicator ready" id="status-council">متاحة</span>
+                <span class="card-action-text">العب الآن ←</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </main>
+
+      <footer class="lobby-footer">
+        <p>ادخل الحكاية، واكتشف تراثنا السعودي العريق</p>
+      </footer>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- 3. شاشة المغامرة التفاعلية الفردية (Game Arena) -->
+    <!-- ============================================ -->
+    <section id="game-screen" class="inactive">
+      <header class="game-header">
+        
+        <!-- زر العودة لشاشة المجلس التفاعلية -->
+        <div class="logo-compact-back">
+          <button id="back-to-lobby-btn" class="btn secondary-btn back-btn">العودة →</button>
+          <div class="logo-divider"></div>
+          <div class="compact-logo-mark">
+            <img src="logo.png" alt="شعار مِرْبَاع مصغر" class="compact-logo-image">
+          </div>
+          <span class="logo-text">مِرْبَاع</span>
+        </div>
+
+        <div class="game-header-title-center">
+          <h2 id="game-subtitle">اسم اللعبة</h2>
+        </div>
+
+        <div class="lobby-stats">
+          <span class="stat-badge">
+            <span class="stat-icon">⭐</span>
+            <span id="game-score-counter">النقاط: ٠</span>
+          </span>
+          <button id="sound-toggle" class="btn sound-btn" aria-label="كتم الأصوات">
+            <span class="sound-icon">🔊</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- ساحة اللعب الخاصة بكل لعبة -->
+      <main id="game-arena-content">
+        <!-- سيتم توليد محتويات اللعب والبطاقات برمجياً عبر ملف games.js -->
+      </main>
+    </section>
+
+  </div>
+
+  <!-- ============================================ -->
+  <!-- 4. نافذة النجاح التفاعلية المحدثة (Success Modal) -->
+  <!-- ============================================ -->
+  <div id="info-modal" class="modal-backdrop inactive">
+    <div class="modal-wrapper">
+      <!-- زر إغلاق مصغر في الزاوية لتجنب حبس المستخدم -->
+      <button class="modal-close-corner" id="modal-close-corner" aria-label="إغلاق">✕</button>
+      <div class="modal-decoration">⚜</div>
+      <div class="modal-body">
+        <h3 id="modal-title">أحسنت! 🎉</h3>
+        <div id="modal-content" class="modal-description">
+          <!-- ديناميكي -->
+        </div>
+      </div>
+      <div class="modal-actions" id="modal-actions-container">
+        <button id="modal-back-lobby-btn" class="btn secondary-btn">العودة إلى الألعاب</button>
+        <button id="modal-next-game-btn" class="btn primary-btn">اللعبة التالية ←</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- 5. نافذة المساعدة التفاعلية (Help Modal) -->
+  <!-- ============================================ -->
+  <div id="help-modal" class="modal-backdrop inactive">
+    <div class="modal-wrapper">
+      <button class="modal-close-corner" id="help-modal-close-corner" aria-label="إغلاق">✕</button>
+      <div class="modal-decoration">💡</div>
+      <div class="modal-body">
+        <h3 id="help-modal-title">تلميح</h3>
+        <div id="help-modal-content" class="modal-description">
+          <!-- ديناميكي -->
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="help-modal-close-btn" class="btn primary-btn">فهمت</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- استيراد ملفات المنطق البرمجي -->
+  <script src="games.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
