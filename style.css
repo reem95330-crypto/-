@@ -1,0 +1,1892 @@
+/* ==========================================================================
+   تطبيق مِرْبَاع التفاعلي للألعاب التراثية السعودية
+   لوحة الألوان الأساسية:
+   البني الداكن: #3A241A
+   الذهبي المطفي: #B88A45
+   ذهبي النقوش: #C9A15A
+   السكري/الكريمي: #F3E8D2
+   الرملي: #CDBB9A
+   ========================================================================== */
+
+:root {
+  --dark-brown: #3A241A;
+  --dark-brown-rgb: 58, 36, 26;
+  --muted-gold: #B88A45;
+  --muted-gold-rgb: 184, 138, 69;
+  --pattern-gold: #C9A15A;
+  --cream: #F3E8D2; /* اللون المطابق تماماً لخلفية اللوقو الرسمي (243, 232, 210) */
+  --cream-rgb: 243, 232, 210;
+  --sand: #CDBB9A;
+  --sand-rgb: 205, 187, 154;
+  --white: #FFFFFF;
+  --success-color: #5B8C5A;
+  --shadow-sm: 0 2px 8px rgba(58, 36, 26, 0.08);
+  --shadow-md: 0 8px 24px rgba(58, 36, 26, 0.12);
+  --shadow-lg: 0 16px 40px rgba(58, 36, 26, 0.18);
+  --transition-smooth: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --font-family: 'Tajawal', 'Cairo', sans-serif;
+}
+
+/* ==========================================================================
+   إعدادات الصفحة العامة (Global Styles)
+   ========================================================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--cream);
+  color: var(--dark-brown);
+  direction: rtl;
+  text-align: right;
+  min-height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+img, svg, button {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+#app-container {
+  width: 100%;
+  max-width: 1200px;
+  height: 100vh;
+  max-height: 900px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--cream);
+  box-shadow: var(--shadow-lg);
+}
+
+@media (min-width: 1201px) {
+  #app-container {
+    border-radius: 24px;
+    height: 90vh;
+    border: 1px solid rgba(var(--muted-gold-rgb), 0.3);
+  }
+}
+
+/* ==========================================================================
+   الخلفية التفاعلية وجزيئات الغبار (Ambient Dust Particles)
+   ========================================================================== */
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  opacity: 0.7;
+}
+
+.particle {
+  position: absolute;
+  background: radial-gradient(circle, var(--pattern-gold) 0%, rgba(255,255,255,0) 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: floatUp 8s infinite linear;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(105vh) translateX(0) scale(0.5);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-5vh) translateX(100px) scale(1.2);
+    opacity: 0;
+  }
+}
+
+/* ==========================================================================
+   عناصر التحكم والأزرار المشتركة (Buttons & UI Elements)
+   ========================================================================== */
+.btn {
+  font-family: var(--font-family);
+  font-weight: 700;
+  padding: 12px 28px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: var(--transition-smooth);
+  font-size: 1.05rem;
+}
+
+.primary-btn {
+  background-color: var(--dark-brown);
+  color: var(--cream);
+  border: 2px solid var(--muted-gold);
+  box-shadow: 0 4px 15px rgba(58, 36, 26, 0.3);
+}
+
+.primary-btn:hover {
+  background-color: var(--muted-gold);
+  color: var(--dark-brown);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(184, 138, 69, 0.4);
+}
+
+.primary-btn:active {
+  transform: translateY(-1px);
+}
+
+.secondary-btn {
+  background-color: transparent;
+  color: var(--dark-brown);
+  border: 2px solid var(--sand);
+}
+
+.secondary-btn:hover {
+  background-color: rgba(var(--sand-rgb), 0.2);
+  border-color: var(--muted-gold);
+  transform: translateY(-2px);
+}
+
+.pulse-glow {
+  position: relative;
+  animation: pulseButton 2s infinite ease-in-out;
+}
+
+@keyframes pulseButton {
+  0% {
+    box-shadow: 0 0 0 0 rgba(184, 138, 69, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(184, 138, 69, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(184, 138, 69, 0);
+  }
+}
+
+/* إمكانية الوصول: أشكال تلميحات التركيز للمفاتيح */
+.btn:focus-visible, 
+.ingredient-card:focus-visible, 
+.game-card:focus-visible,
+.modal-close-corner:focus-visible {
+  outline: 3px solid var(--muted-gold) !important;
+  outline-offset: 3px !important;
+}
+
+/* ==========================================================================
+   1. الصفحة الرئيسية (Home Screen)
+   ========================================================================== */
+#splash-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 50px 20px 40px 20px;
+  z-index: 100;
+  background-color: var(--cream);
+  transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+}
+
+#splash-screen.inactive {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* حاوية الشعار المدمج بصرياً مع الخلفية */
+.hero-logo-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+  z-index: 10;
+  transform-origin: center center;
+  transition: transform 1.6s cubic-bezier(0.77, 0, 0.175, 1), 
+              opacity 1.2s cubic-bezier(0.77, 0, 0.175, 1),
+              filter 1.2s ease-in-out;
+}
+
+/* تأثير التكبير التدريجي والولوج للداخل */
+#splash-screen.door-opened .hero-logo-wrapper {
+  transform: scale(2.8);
+  opacity: 0;
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+.hero-logo-image {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 20px rgba(58, 36, 26, 0.04));
+  animation: logoFloat 4s infinite ease-in-out;
+}
+
+@media (max-width: 480px) {
+  .hero-logo-image {
+    max-width: 290px;
+  }
+}
+
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* واجهة النصوص والأزرار الترحيبية */
+.hero-brand-container {
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 15px;
+  width: 90%;
+  max-width: 580px;
+  transition: all 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+#splash-screen.door-opened .hero-brand-container {
+  opacity: 0;
+  transform: translateY(30px) scale(0.9);
+  pointer-events: none;
+}
+
+.brand-title {
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: var(--dark-brown);
+  margin-bottom: 5px;
+  letter-spacing: 1px;
+}
+
+.brand-tagline {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--sand);
+  margin-bottom: 12px;
+  text-shadow: 0 1px 3px rgba(var(--dark-brown-rgb), 0.4);
+}
+
+.brand-description {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--dark-brown);
+  opacity: 0.85;
+  margin-bottom: 30px;
+  max-width: 500px;
+}
+
+#splash-screen .btn {
+  padding: 15px 45px;
+  font-size: 1.2rem;
+  border-radius: 14px;
+}
+
+.splash-footer {
+  font-size: 0.85rem;
+  color: var(--dark-brown);
+  opacity: 0.7;
+  transition: opacity 0.5s ease;
+  z-index: 20;
+  margin-top: 15px;
+}
+
+#splash-screen.door-opened .splash-footer {
+  opacity: 0;
+}
+
+/* ==========================================================================
+   2. صفحة «رحلة مِرْبَاع» لاختيار الألعاب (Game Selection - Lobby)
+   ========================================================================== */
+#main-lobby {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 10;
+  transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;
+  background-color: var(--cream);
+  padding: 0;
+}
+
+#main-lobby.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.lobby-header, .game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 20px;
+  border-bottom: 1px solid rgba(var(--sand-rgb), 0.4);
+  background-color: rgba(var(--cream-rgb), 0.5);
+  backdrop-filter: blur(8px);
+  z-index: 5;
+}
+
+.logo-compact-back {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-divider {
+  width: 1px;
+  height: 24px;
+  background-color: rgba(var(--dark-brown-rgb), 0.2);
+  margin: 0 4px;
+}
+
+.back-btn {
+  padding: 8px 18px;
+  font-size: 0.95rem;
+}
+
+.compact-logo-mark {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-smooth);
+}
+
+.logo-compact-back:hover .compact-logo-mark {
+  transform: scale(1.06);
+}
+
+.compact-logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.logo-text {
+  font-weight: 900;
+  font-size: 1.45rem;
+  color: var(--dark-brown);
+}
+
+
+.lobby-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stat-badge {
+  background-color: var(--dark-brown);
+  color: var(--cream);
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--muted-gold);
+}
+
+.sound-btn {
+  background-color: transparent;
+  color: var(--dark-brown);
+  border: 1px solid var(--sand);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.sound-btn:hover {
+  background-color: rgba(var(--sand-rgb), 0.2);
+  border-color: var(--muted-gold);
+}
+
+.lobby-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 30px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.lobby-welcome {
+  text-align: center;
+  margin-bottom: 20px;
+  max-width: 600px;
+}
+
+.lobby-welcome h2 {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--dark-brown);
+  margin-bottom: 8px;
+}
+
+.lobby-welcome p {
+  font-size: 1.05rem;
+  color: rgba(var(--dark-brown-rgb), 0.75);
+  line-height: 1.5;
+}
+
+/* مؤشر تتبع الرحلة والتقدم الفني */
+.lobby-progress-container {
+  width: 90%;
+  max-width: 950px;
+  margin: 0 auto 25px auto;
+  background-color: var(--white);
+  border: 1px solid rgba(var(--sand-rgb), 0.25);
+  padding: 16px 24px;
+  border-radius: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.progress-title {
+  font-size: 1.02rem;
+  color: var(--dark-brown);
+}
+
+.progress-count {
+  color: var(--muted-gold);
+  font-size: 1.05rem;
+}
+
+.lobby-progress-bar {
+  height: 10px;
+  background-color: rgba(var(--sand-rgb), 0.25);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.lobby-progress-fill {
+  height: 100%;
+  background-color: var(--success-color);
+  border-radius: 5px;
+  width: 0%;
+  transition: width 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 0 8px rgba(91, 140, 90, 0.3);
+}
+
+/* شبكة ألعاب المجلس الرئيسي (الأبعاد والنسب الفخمة) */
+.games-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  width: 100%;
+  max-width: 950px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .games-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.game-card {
+  background-color: var(--white);
+  border: 2px solid rgba(var(--sand-rgb), 0.35);
+  border-radius: 24px;
+  padding: 30px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-smooth);
+  box-shadow: var(--shadow-sm);
+  justify-content: space-between;
+  min-height: 330px; /* الارتفاع والنسب المريحة للبطاقات */
+}
+
+.game-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--muted-gold);
+}
+
+.card-pattern-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background-color: var(--sand);
+  transition: var(--transition-smooth);
+}
+
+.game-card:hover .card-pattern-overlay {
+  background-color: var(--muted-gold);
+}
+
+.card-icon {
+  font-size: 3.8rem;
+  margin-bottom: 14px;
+  transition: var(--transition-smooth);
+}
+
+.game-card:hover .card-icon {
+  transform: scale(1.15) rotate(5deg);
+}
+
+.card-body-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.game-card h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--dark-brown);
+  margin-bottom: 8px;
+}
+
+.game-card p {
+  font-size: 0.9rem;
+  color: rgba(var(--dark-brown-rgb), 0.65);
+  line-height: 1.5;
+}
+
+.card-footer-info {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-game-type {
+  font-size: 0.78rem;
+  color: var(--sand);
+  font-weight: 700;
+}
+
+.card-status {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-indicator {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 20px;
+}
+
+.status-indicator.ready {
+  background-color: rgba(184, 138, 69, 0.15);
+  color: var(--muted-gold);
+}
+
+.status-indicator.future {
+  background-color: rgba(var(--sand-rgb), 0.2);
+  color: rgba(var(--dark-brown-rgb), 0.5);
+}
+
+.card-action-text {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--dark-brown);
+  transition: var(--transition-smooth);
+}
+
+.game-card:hover .card-action-text {
+  color: var(--muted-gold);
+  transform: translateX(-4px);
+}
+
+/* تنسيق المظهر المعطل للألعاب المستقبلية */
+.game-card.disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  background-color: rgba(var(--white-rgb), 0.4);
+  border-color: rgba(var(--sand-rgb), 0.2);
+}
+
+.game-card.disabled:hover {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+  border-color: rgba(var(--sand-rgb), 0.2);
+}
+
+.game-card.disabled .card-icon, 
+.game-card.disabled h3, 
+.game-card.disabled p {
+  filter: grayscale(80%);
+}
+
+.game-card.completed-stage {
+  border-color: var(--success-color);
+  box-shadow: 0 0 15px rgba(91, 140, 90, 0.15);
+}
+
+.lobby-footer {
+  font-size: 0.85rem;
+  color: var(--dark-brown);
+  opacity: 0.6;
+  text-align: center;
+  padding: 15px;
+  border-top: 1px solid rgba(var(--sand-rgb), 0.2);
+}
+
+/* ==========================================================================
+   3. شاشة المغامرة التفاعلية الفردية (Game Arena)
+   ========================================================================== */
+#game-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 10;
+  transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;
+}
+
+#game-screen.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+#game-arena-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   ألعاب ساحة اللعب (Individual Game Styling)
+   ========================================================================== */
+
+/* أ. لعبة القهوة */
+.coffee-game-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 650px;
+  height: 100%;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.puzzle-instruction-header {
+  text-align: center;
+  width: 100%;
+}
+
+.instruction-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--dark-brown);
+  margin-bottom: 8px;
+}
+
+.step-badge {
+  display: inline-block;
+  background-color: var(--dark-brown);
+  color: var(--cream);
+  padding: 5px 14px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 1px solid var(--muted-gold);
+}
+
+.feedback-toast {
+  color: #B85A5A;
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin-top: 10px;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  text-align: center;
+  min-height: 22px;
+}
+
+.feedback-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.central-cooking-zone {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.dallah-cooking-container {
+  position: relative;
+  width: 110px;
+  height: 130px;
+  z-index: 10;
+  filter: drop-shadow(0 8px 20px rgba(58, 36, 26, 0.2));
+  transform-origin: bottom center;
+}
+
+.dallah-interactive-svg {
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes dallahPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08) rotate(-3deg); }
+  100% { transform: scale(1); }
+}
+
+.boiling-bubble-emitter {
+  position: absolute;
+  top: 60px;
+  left: 30px;
+  right: 30px;
+  bottom: 20px;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.boiling-bubble {
+  position: absolute;
+  bottom: 0;
+  width: 8px;
+  height: 8px;
+  background-color: rgba(243, 232, 210, 0.4);
+  border-radius: 50%;
+  animation: boilUp 1s ease-out forwards;
+}
+
+@keyframes boilUp {
+  0% { transform: translateY(0) scale(0.6); opacity: 0; }
+  50% { opacity: 0.7; }
+  100% { transform: translateY(-45px) scale(1.5); opacity: 0; }
+}
+
+.steam-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  pointer-events: none;
+}
+
+.steam-cloud {
+  position: absolute;
+  bottom: 10px;
+  width: 24px;
+  height: 24px;
+  background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 70%);
+  border-radius: 50%;
+  filter: blur(2px);
+  animation: steamRise 2s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes steamRise {
+  0% { transform: translateY(0) scale(0.8); opacity: 0; }
+  20% { opacity: 0.6; }
+  80% { opacity: 0.3; }
+  100% { transform: translateY(-50px) translateX(20px) scale(2); opacity: 0; }
+}
+
+.puzzle-progress-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 90%;
+  max-width: 480px;
+}
+
+.progress-bar-frame {
+  flex-grow: 1;
+  height: 12px;
+  background-color: rgba(var(--sand-rgb), 0.3);
+  border: 1px solid var(--sand);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: var(--muted-gold);
+  border-radius: 6px;
+  transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 0 8px rgba(184, 138, 69, 0.4);
+}
+
+.progress-fraction-label {
+  font-weight: 900;
+  color: var(--muted-gold);
+  font-size: 1.1rem;
+  min-width: 35px;
+  text-align: left;
+}
+
+.ingredients-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  .ingredients-cards-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.ingredient-card {
+  background-color: var(--white);
+  border: 1px solid rgba(var(--sand-rgb), 0.4);
+  border-radius: 16px;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-smooth);
+  box-shadow: var(--shadow-sm);
+}
+
+.ingredient-card-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: var(--sand);
+}
+
+.ingredient-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--muted-gold);
+}
+
+.ingredient-card:hover .ingredient-card-pattern {
+  background-color: var(--muted-gold);
+}
+
+.ingredient-emoji {
+  font-size: 2.2rem;
+  margin-bottom: 8px;
+  transition: var(--transition-smooth);
+}
+
+.ingredient-card:hover .ingredient-emoji {
+  transform: scale(1.15) rotate(3deg);
+}
+
+.ingredient-name {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--dark-brown);
+  margin-bottom: 4px;
+}
+
+.ingredient-desc {
+  font-size: 0.8rem;
+  color: rgba(var(--dark-brown-rgb), 0.6);
+  line-height: 1.4;
+}
+
+.completed-card {
+  opacity: 0.45 !important;
+  border-color: var(--success-color) !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.ingredient-card.correct-added {
+  border-color: var(--success-color);
+  box-shadow: 0 0 15px rgba(91, 140, 90, 0.3);
+}
+
+.ingredient-card.shake-error {
+  border-color: #B85A5A;
+  animation: cardShake 0.5s ease-in-out;
+}
+
+@keyframes cardShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+/* ب. لعبة الباب النجدي */
+.door-puzzle-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 480px;
+  gap: 16px;
+}
+
+.puzzle-instruction, .memory-instruction {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.puzzle-instruction h3, .memory-instruction h3 {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--dark-brown);
+  margin-bottom: 6px;
+}
+
+.puzzle-instruction p, .memory-instruction p {
+  font-size: 0.92rem;
+  color: rgba(var(--dark-brown-rgb), 0.7);
+  line-height: 1.5;
+}
+
+.puzzle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: 100%;
+  background-color: var(--dark-brown);
+  padding: 12px;
+  border-radius: 20px;
+  border: 3px solid var(--muted-gold);
+  box-shadow: var(--shadow-md);
+}
+
+.puzzle-grid.shake-error {
+  animation: cardShake 0.6s ease-in-out;
+  border-color: #B85A5A;
+}
+
+.puzzle-tile {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: inset 0 0 12px rgba(0,0,0,0.6);
+  background-color: var(--dark-brown);
+}
+
+.puzzle-tile.solved {
+  border: 1px solid var(--pattern-gold);
+  cursor: not-allowed;
+}
+
+/* ج. لعبة الرموز التراثية (Identification Game Styles) */
+.memory-game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 480px;
+  gap: 16px;
+}
+
+/* إطار الرمز البصري البارز */
+.quiz-symbol-frame {
+  width: 130px;
+  height: 130px;
+  background-color: var(--white);
+  border: 2px solid rgba(var(--sand-rgb), 0.4);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  margin: 15px auto;
+  position: relative;
+  animation: floatUpMini 3s infinite ease-in-out;
+}
+
+@keyframes floatUpMini {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.quiz-symbol-emoji {
+  font-size: 5rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
+}
+
+/* شبكة الخيارات الأربعة */
+.quiz-options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.quiz-option-btn {
+  padding: 16px 12px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border-radius: 16px;
+  text-align: center;
+  transition: var(--transition-smooth);
+}
+
+.quiz-option-btn.shake-error {
+  animation: cardShake 0.5s ease-in-out;
+}
+
+/* ==========================================================================
+   تأثير جزيئات مفرقعات النجاح الخفيفة (Light Confetti Burst)
+   ========================================================================== */
+.confetti-particle {
+  position: fixed;
+  top: -20px;
+  z-index: 999;
+  border-radius: 2px;
+  pointer-events: none;
+  animation: confettiFall 2.5s linear forwards;
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(0) rotate(0deg) rotateY(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(105vh) rotate(360deg) rotateY(180deg);
+    opacity: 0;
+  }
+}
+
+/* ==========================================================================
+   النافذة المنبثقة التفاعلية (Success Modal)
+   ========================================================================== */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(37, 22, 16, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.modal-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-wrapper {
+  background-color: var(--cream);
+  border: 2px solid var(--muted-gold);
+  border-radius: 24px;
+  width: 90%;
+  max-width: 480px;
+  padding: 35px 30px;
+  text-align: center;
+  position: relative;
+  box-shadow: var(--shadow-lg);
+  transform: scale(0.8) translateY(20px);
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-backdrop.active .modal-wrapper {
+  transform: scale(1) translateY(0);
+}
+
+.modal-close-corner {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--dark-brown);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: var(--transition-smooth);
+  z-index: 10;
+  outline: none;
+}
+
+.modal-close-corner:hover {
+  opacity: 1;
+  color: #B85A5A;
+  transform: scale(1.1);
+}
+
+.modal-decoration {
+  font-size: 2.2rem;
+  color: var(--muted-gold);
+  margin-bottom: 12px;
+}
+
+.modal-body h3 {
+  font-size: 1.6rem;
+  font-weight: 900;
+  margin-bottom: 14px;
+  color: var(--dark-brown);
+}
+
+.modal-description {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: rgba(var(--dark-brown-rgb), 0.8);
+  margin-bottom: 24px;
+}
+
+.success-message-text {
+  font-weight: bold;
+  color: var(--success-color);
+  font-size: 1.15rem;
+  margin-bottom: 16px;
+}
+
+/* صندوق الحقيقة الثقافية التراثية */
+.cultural-fact-box {
+  background-color: rgba(var(--sand-rgb), 0.15);
+  border-right: 4px solid var(--muted-gold);
+  border-radius: 8px 4px 4px 8px;
+  padding: 16px;
+  text-align: right;
+  margin-top: 15px;
+}
+
+.cultural-fact-box h4 {
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: var(--muted-gold);
+  margin-bottom: 6px;
+}
+
+.cultural-fact-box p {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--dark-brown);
+  opacity: 0.9;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* مظهر الزر المعطل */
+.disabled-btn {
+  background-color: var(--sand) !important;
+  color: rgba(var(--dark-brown-rgb), 0.5) !important;
+  border-color: transparent !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* ==========================================================================
+   إعدادات شريط التمرير
+   ========================================================================== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--sand);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-gold);
+}
+
+/* ==========================================================================
+   6. أنماط نظام المساعدة والباب النجدي المطور ثلاثي الأبعاد
+   ========================================================================== */
+
+/* حاوية التعليمات والتحكم العلوي لكل لعبة */
+.game-instruction-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 20px;
+}
+
+.instruction-text-block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.instruction-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 6px;
+  width: 100%;
+}
+
+.instruction-desc-text {
+  font-size: 0.95rem;
+  color: rgba(var(--dark-brown-rgb), 0.7);
+  line-height: 1.5;
+  max-width: 500px;
+}
+
+/* زر المساعدة المطور */
+.help-btn {
+  background-color: var(--white);
+  color: var(--dark-brown);
+  border: 2px solid var(--sand);
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-smooth);
+}
+
+.help-btn:hover:not(:disabled) {
+  background-color: rgba(var(--sand-rgb), 0.15);
+  border-color: var(--muted-gold);
+  transform: translateY(-2px);
+}
+
+.help-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.help-badge {
+  background-color: var(--dark-brown);
+  color: var(--cream);
+  border: 1px solid var(--muted-gold);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+/* حالة زر المساعدة بعد النفاد */
+.help-btn.disabled-btn {
+  background-color: rgba(var(--sand-rgb), 0.2) !important;
+  border-color: rgba(var(--sand-rgb), 0.3) !important;
+  color: rgba(var(--dark-brown-rgb), 0.4) !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.help-btn.disabled-btn .help-badge {
+  background-color: rgba(var(--dark-brown-rgb), 0.3);
+  border-color: transparent;
+  color: rgba(var(--cream-rgb), 0.5);
+}
+
+/* تنسيقات الباب النجدي ثلاثي الأبعاد المطور */
+.door-wrapper {
+  position: relative;
+  width: 280px;
+  height: 360px;
+  perspective: 1200px;
+  margin: 10px auto 20px auto;
+  border: 6px solid var(--dark-brown);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  background-color: #1e120d; /* عمق الغرفة المظلمة بالداخل */
+  overflow: hidden;
+}
+
+/* إطار الباب الداخلي */
+.door-frame-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 6px solid var(--muted-gold);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* محتوى خلف الباب يظهر عند الفتح */
+.door-inner-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  color: var(--cream);
+  z-index: 0;
+}
+
+.inner-glow {
+  font-size: 3rem;
+  animation: pulseGlow 2s infinite ease-in-out;
+  color: var(--pattern-gold);
+}
+
+.inner-text {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--cream);
+  margin-top: 10px;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+}
+
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px var(--pattern-gold)); }
+  50% { transform: scale(1.15); filter: drop-shadow(0 0 15px var(--pattern-gold)); }
+}
+
+/* ضفتي الباب */
+.door-leaves {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 2;
+  transform-style: preserve-3d;
+}
+
+.door-leaf {
+  width: 50%;
+  height: 100%;
+  background-color: #3A241A;
+  background-image: linear-gradient(90deg, rgba(0,0,0,0.15) 0%, transparent 10%, transparent 90%, rgba(0,0,0,0.3) 100%);
+  position: relative;
+  transition: transform 1.8s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 1.5s ease;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.4);
+}
+
+.door-leaf.left-leaf {
+  transform-origin: right center;
+  border-left: 3px solid var(--muted-gold);
+}
+
+.door-leaf.right-leaf {
+  transform-origin: left center;
+  border-right: 3px solid var(--muted-gold);
+}
+
+/* مظهر نقوش الباب على الضفتين */
+.shutter-patterns-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  height: 100%;
+  padding: 10px 4px;
+}
+
+/* شكل المسامير الحديدية التقليدية على الباب */
+.door-nail-stud {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background-color: #111;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.left-leaf .door-nail-stud { right: 8px; }
+.right-leaf .door-nail-stud { left: 8px; }
+
+/* موضع النقش الناقص في المنتصف بين الضفتين */
+.central-pattern-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+}
+
+.sequence-panel-slot {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background-color: #2a1a13;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-smooth);
+  border: 1px solid rgba(var(--sand-rgb), 0.2);
+}
+
+.sequence-panel-slot.missing-slot {
+  border: 2px dashed var(--pattern-gold);
+  background-color: rgba(var(--muted-gold-rgb), 0.1);
+  box-shadow: 0 0 10px rgba(var(--muted-gold-rgb), 0.2);
+  color: var(--pattern-gold);
+  font-size: 1.4rem;
+  font-weight: 900;
+  animation: pulseBorder 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseBorder {
+  0%, 100% { border-color: var(--pattern-gold); box-shadow: 0 0 4px var(--pattern-gold); }
+  50% { border-color: var(--white); box-shadow: 0 0 12px var(--pattern-gold); }
+}
+
+.sequence-panel-slot svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* تأثير فتح الباب */
+.door-wrapper.solved .left-leaf {
+  transform: rotateY(115deg) scaleX(0.9);
+  opacity: 0.95;
+}
+
+.door-wrapper.solved .right-leaf {
+  transform: rotateY(-115deg) scaleX(0.9);
+  opacity: 0.95;
+}
+
+/* شبكة خيارات الباب */
+.door-options-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 400px;
+  margin-top: 10px;
+}
+
+.door-option-card {
+  aspect-ratio: 1;
+  background-color: var(--white);
+  border: 2px solid rgba(var(--sand-rgb), 0.4);
+  border-radius: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-smooth);
+}
+
+.door-option-card:hover:not(.completed-state) {
+  transform: translateY(-4px);
+  border-color: var(--muted-gold);
+  box-shadow: var(--shadow-md);
+}
+
+.door-option-card.correct-selected {
+  border-color: var(--success-color);
+  background-color: rgba(91, 140, 90, 0.05);
+  box-shadow: 0 0 15px rgba(91, 140, 90, 0.3);
+}
+
+.door-option-card.shake-error {
+  border-color: #B85A5A;
+  animation: cardShake 0.5s ease-in-out;
+}
+
+/* ==========================================================================
+   7. أنماط الأيقونات والرموز التراثية SVG وأسلوب الرسم الموحد
+   ========================================================================== */
+.card-icon {
+  width: 90px !important;
+  height: 90px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.heritage-svg-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(58,36,26,0.12));
+  transition: var(--transition-smooth);
+}
+
+.game-card:hover .heritage-svg-icon {
+  transform: scale(1.1) rotate(2deg);
+}
+
+/* ==========================================================================
+   8. أنماط شاشة اختيار الألغاز الفرعية (Sub-Level Selector)
+   ========================================================================== */
+.sub-lobby-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 700px;
+  gap: 20px;
+  text-align: center;
+}
+
+.sub-lobby-title h3 {
+  font-size: 1.5rem;
+  color: var(--dark-brown);
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.sub-lobby-title p {
+  font-size: 0.95rem;
+  color: rgba(var(--dark-brown-rgb), 0.7);
+}
+
+.sub-levels-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+@media (min-width: 480px) {
+  .sub-levels-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.sub-level-card {
+  background-color: var(--white);
+  border: 2px solid rgba(var(--sand-rgb), 0.4);
+  border-radius: 20px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-smooth);
+  width: 100%;
+}
+
+.sub-level-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--muted-gold);
+  box-shadow: var(--shadow-md);
+}
+
+.sub-level-card .sub-card-icon {
+  width: 75px;
+  height: 75px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sub-level-card h4 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--dark-brown);
+  margin-bottom: 6px;
+}
+
+.sub-level-card p {
+  font-size: 0.85rem;
+  color: rgba(var(--dark-brown-rgb), 0.6);
+  line-height: 1.4;
+}
+
+.sub-level-card.completed-level {
+  border-color: var(--success-color);
+  box-shadow: 0 0 10px rgba(91, 140, 90, 0.15);
+}
+
+/* ==========================================================================
+   9. أنماط لغز الدلة ولغز السدو (Dallah & Sadu Puzzles)
+   ========================================================================== */
+.dallah-puzzle-wrapper, .sadu-puzzle-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  gap: 16px;
+}
+
+.dallah-showcase-frame, .sadu-showcase-frame {
+  width: 150px;
+  height: 150px;
+  background-color: var(--white);
+  border: 2px solid rgba(var(--sand-rgb), 0.35);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  padding: 12px;
+}
+
+/* ==========================================================================
+   10. أنماط لعبة رحلة السدو (Sadu Journey Game)
+   ========================================================================== */
+.sadu-journey-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 540px;
+  gap: 20px;
+}
+
+/* لوحة شريط السدو الرئيسي */
+.sadu-pattern-strip {
+  width: 100%;
+  background-color: #251610;
+  border: 4px solid var(--muted-gold);
+  border-radius: 16px;
+  padding: 16px 12px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sadu-strip-flow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 440px;
+  gap: 8px;
+}
+
+.sadu-strip-cell {
+  width: 56px;
+  height: 80px;
+  border-radius: 6px;
+  background-color: #3A241A;
+  border: 1px solid rgba(var(--sand-rgb), 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: var(--transition-smooth);
+}
+
+.sadu-strip-cell.missing-cell {
+  border: 2px dashed var(--pattern-gold);
+  background-color: rgba(var(--muted-gold-rgb), 0.15);
+  color: var(--pattern-gold);
+  font-size: 1.5rem;
+  font-weight: bold;
+  animation: pulseBorder 1.5s infinite ease-in-out;
+}
+
+.sadu-strip-cell svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* خيارات السدو */
+.sadu-options-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  width: 100%;
+  max-width: 380px;
+  margin-top: 10px;
+}
+
+.sadu-option-card {
+  aspect-ratio: 1;
+  background-color: var(--white);
+  border: 2px solid rgba(var(--sand-rgb), 0.4);
+  border-radius: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-smooth);
+}
+
+.sadu-option-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--muted-gold);
+  box-shadow: var(--shadow-md);
+}
+
+.sadu-option-card.correct-selected {
+  border-color: var(--success-color);
+  background-color: rgba(91, 140, 90, 0.05);
+}
+
+.sadu-option-card.shake-error {
+  border-color: #B85A5A;
+  animation: cardShake 0.5s ease-in-out;
+}
+
+/* ==========================================================================
+   11. أنماط لعبة حكايات المجلس (Council Stories Game)
+   ========================================================================== */
+.council-stories-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 520px;
+  gap: 20px;
+}
+
+.council-showcase-frame {
+  width: 160px;
+  height: 160px;
+  background-color: var(--white);
+  border: 2px solid rgba(var(--sand-rgb), 0.35);
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  padding: 14px;
+  animation: floatUpMini 3.5s infinite ease-in-out;
+}
+
+.council-question-box {
+  background-color: var(--white);
+  border: 1px solid rgba(var(--sand-rgb), 0.3);
+  border-radius: 16px;
+  padding: 16px;
+  width: 100%;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.council-question-box h4 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--dark-brown);
+  line-height: 1.5;
+}
+
+.council-options-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.council-option-row {
+  width: 100%;
+  padding: 16px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  border-radius: 14px;
+  text-align: right;
+  transition: var(--transition-smooth);
+}
+
+
